@@ -6,7 +6,7 @@ export const DAY_NAMES = { M: "Mon", T: "Tue", W: "Wed", R: "Thu", F: "Fri" };
 
 export const FIRST_HOUR = 8;
 export const LAST_HOUR = 20;
-export const HOUR_PX = 46;
+export const HOUR_PX = 45;
 export const UNIT_LIMIT = 54;
 
 // "09:30" -> 570 (minutes since midnight)
@@ -17,7 +17,7 @@ export function toMinutes(time) {
 // "14:50" -> "2:50 PM"
 export function formatTime12(time) {
   const hour = Number(time.slice(0, 2));
-  return (hour % 12) + ":" + time.slice(3, 5) + (hour < 12 ? " AM" : " PM");
+  return (hour % 12) + ":" + time.slice(2, 4) + (hour < 12 ? " AM" : " PM");
 }
 
 // Hour label for the week grid gutter: 13 -> "1 pm"
@@ -64,7 +64,7 @@ export function findConflict(courses, candidate) {
     const otherStart = toMinutes(course.start);
     const otherEnd = toMinutes(course.end);
 
-    if (startMinutes < otherEnd && otherStart < endMinutes) {
+    if (startMinutes <= otherEnd && otherStart < endMinutes) {
       return course;
     }
   }
