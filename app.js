@@ -153,8 +153,10 @@ function renderWeek() {
         return;
       }
       const pos = blockPosition(course);
+      // data-index lets the click listener on #grid find the course to remove.
       columns +=
-        '<div class="block tint-' + ((index % 5) + 1) + '" style="top:' + pos.top + "px;height:" + pos.height + 'px">' +
+        '<div class="block tint-' + ((index % 5) + 1) + '" data-index="' + index +
+        '" title="Click to remove ' + course.number + '" style="top:' + pos.top + "px;height:" + pos.height + 'px">' +
         '<span class="b-num">' + course.number + "</span>" +
         '<span class="b-time">' + formatTime12(course.start) + "</span>" +
         "</div>";
@@ -173,6 +175,17 @@ document.getElementById("rows").addEventListener("click", function (event) {
   const button = event.target.closest(".btn-remove");
   if (button) {
     removeCourse(Number(button.dataset.index));
+  }
+});
+document.getElementById("grid").addEventListener("click", function (event) {
+  const block = event.target.closest(".block");
+  if (!block) {
+    return;
+  }
+  const index = Number(block.dataset.index);
+  const course = courses[index];
+  if (course && window.confirm("Remove " + course.number + " (" + course.name + ") from your schedule?")) {
+    removeCourse(index);
   }
 });
 
