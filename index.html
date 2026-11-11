@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Planner</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="appbar">
+    <div class="brand">
+        <span class="mark" aria-hidden="true"></span>
+        <span class="brand-name">Schedule Planner</span>
+    </div>
+    <div class="appbar-stats" id="stats"></div>
+</header>
+
+<main class="layout">
+
+    <aside class="panel compose">
+        <h2 class="label">Add a course</h2>
+
+        <div class="field">
+            <label for="number">Course number</label>
+            <input id="number" type="text" autocomplete="off" placeholder="15-113">
+        </div>
+
+        <div class="field">
+            <label for="name">Title</label>
+            <input id="name" type="text" autocomplete="off" placeholder="Effective Coding with AI">
+        </div>
+
+        <div class="field">
+            <label for="units">Units</label>
+            <input id="units" type="text" inputmode="numeric" autocomplete="off" placeholder="9">
+        </div>
+
+        <fieldset class="field days">
+            <legend>Meeting days</legend>
+            <div class="day-toggles">
+                <label><input type="checkbox" class="day" value="M"><span>M</span></label>
+                <label><input type="checkbox" class="day" value="T"><span>T</span></label>
+                <label><input type="checkbox" class="day" value="W"><span>W</span></label>
+                <label><input type="checkbox" class="day" value="R"><span>R</span></label>
+                <label><input type="checkbox" class="day" value="F"><span>F</span></label>
+            </div>
+        </fieldset>
+
+        <div class="field-row">
+            <div class="field">
+                <label for="start">Start</label>
+                <input id="start" type="time" value="09:00">
+            </div>
+            <div class="field">
+                <label for="end">End</label>
+                <input id="end" type="time" value="10:20">
+            </div>
+        </div>
+
+        <button id="add-btn" class="btn-primary">Add course</button>
+        <p id="message" class="message"></p>
+    </aside>
+
+    <section class="content">
+
+        <div class="panel">
+            <div class="panel-head">
+                <h2 class="label">Week at a glance</h2>
+                <span class="hint">8 am to 8 pm</span>
+            </div>
+            <div id="grid" class="week"></div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-head">
+                <h2 class="label">Courses</h2>
+                <input id="search" class="search" type="search" autocomplete="off"
+                       placeholder="Filter by number or title">
+            </div>
+            <table class="roster">
+                <thead>
+                    <tr>
+                        <th>Number</th>
+                        <th>Title</th>
+                        <th class="num">Units</th>
+                        <th>Days</th>
+                        <th>Time</th>
+                        <th><span class="sr-only">Remove</span></th>
+                    </tr>
+                </thead>
+                <tbody id="rows"></tbody>
+            </table>
+            <p id="summary" class="summary"></p>
+        </div>
+
+    </section>
+</main>
+
+<footer class="disclosure">
+    <p><strong>About this demo.</strong> Every file in this project, including the HTML, the CSS, the
+    JavaScript, and the README, was written by Claude, Anthropic's AI model, with very little human
+    oversight. That was a deliberate choice by the course staff, and we are telling you plainly
+    because you deserve to know what you are reading before you build on it.</p>
+    <p>It is also rather the point. <strong>A polished interface is not evidence that the logic
+    underneath it is correct.</strong></p>
+</footer>
+
+<script type="module" src="app.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,539 @@
+/* Schedule Planner
+   Written by Claude (Anthropic) with very little human oversight, as course material. */
+
+:root {
+    --paper: #f6f5f2;
+    --surface: #ffffff;
+    --ink: #1b1c1e;
+    --muted: #6e7277;
+    --faint: #9a9da1;
+    --hairline: #e4e2dc;
+    --hairline-soft: #efede8;
+    --accent: #14605c;
+    --accent-deep: #0e4a47;
+    --danger: #9e3b2e;
+    --ok: #2d6a4a;
+    --hour: 46px;
+
+    --t1-bg: #e8ece4;  --t1-edge: #9fb296;
+    --t2-bg: #f3e7df;  --t2-edge: #c9a289;
+    --t3-bg: #e3e9f0;  --t3-edge: #99aec4;
+    --t4-bg: #f1ecdc;  --t4-edge: #c4b184;
+    --t5-bg: #eee3e4;  --t5-edge: #bf9ba0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+/* ---------- app bar ---------- */
+
+.appbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 0 24px;
+    height: 56px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--hairline);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.mark {
+    position: relative;
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    background: var(--accent);
+    flex: none;
+}
+
+.mark::after,
+.mark::before {
+    content: "";
+    position: absolute;
+    height: 2px;
+    background: #fff;
+    border-radius: 1px;
+}
+
+.mark::after {
+    left: 3px;
+    right: 3px;
+    top: 5px;
+    opacity: 0.9;
+}
+
+.mark::before {
+    left: 3px;
+    right: 7px;
+    top: 9px;
+    opacity: 0.55;
+}
+
+.brand-name {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+}
+
+.appbar-stats {
+    font-size: 12.5px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.appbar-stats .over {
+    color: var(--danger);
+    font-weight: 550;
+}
+
+/* ---------- layout ---------- */
+
+.layout {
+    display: grid;
+    grid-template-columns: 296px minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 20px 24px 8px;
+}
+
+.content {
+    display: grid;
+    gap: 20px;
+    min-width: 0;
+}
+
+.panel {
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: 6px;
+}
+
+.panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--hairline);
+}
+
+.label {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 650;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--faint);
+}
+
+.hint {
+    font-size: 11.5px;
+    color: var(--faint);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ---------- compose form ---------- */
+
+.compose {
+    padding: 16px;
+}
+
+.compose .label {
+    margin-bottom: 14px;
+}
+
+.field {
+    margin-bottom: 12px;
+    border: 0;
+    padding: 0;
+    min-width: 0;
+}
+
+.field label,
+.field legend {
+    display: block;
+    padding: 0;
+    margin-bottom: 5px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+}
+
+.field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+input[type="text"],
+input[type="time"],
+input[type="search"] {
+    width: 100%;
+    font: inherit;
+    font-size: 13.5px;
+    padding: 7px 9px;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: 4px;
+    transition: border-color 120ms ease;
+}
+
+input[type="time"] {
+    font-variant-numeric: tabular-nums;
+}
+
+input::placeholder {
+    color: #b7b9bc;
+}
+
+input:hover {
+    border-color: #d4d1c9;
+}
+
+input:focus-visible,
+button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+    border-color: var(--accent);
+}
+
+.day-toggles {
+    display: flex;
+    gap: 4px;
+}
+
+.day-toggles label {
+    position: relative;
+    margin: 0;
+}
+
+.day-toggles input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.day-toggles span {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    min-width: 34px;
+    height: 32px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: 4px;
+    transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+
+.day-toggles label:hover span {
+    border-color: #d4d1c9;
+}
+
+.day-toggles input:checked + span {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+}
+
+.day-toggles input:focus-visible + span {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.btn-primary {
+    width: 100%;
+    margin-top: 4px;
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 550;
+    padding: 8px 14px;
+    color: #fff;
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 120ms ease;
+}
+
+.btn-primary:hover {
+    background: var(--accent-deep);
+    border-color: var(--accent-deep);
+}
+
+.message {
+    margin: 10px 0 0;
+    font-size: 12.5px;
+    min-height: 1.2em;
+}
+
+.message.error {
+    color: var(--danger);
+}
+
+.message.ok {
+    color: var(--ok);
+}
+
+/* ---------- week grid ---------- */
+
+.week {
+    --cols: 54px repeat(5, minmax(0, 1fr));
+    padding: 0 10px 10px;
+    overflow-x: auto;
+}
+
+.week-head,
+.week-body {
+    display: grid;
+    grid-template-columns: var(--cols);
+    min-width: 520px;
+}
+
+.week-head {
+    border-bottom: 1px solid var(--hairline);
+}
+
+.week-head div {
+    padding: 9px 10px;
+    font-size: 11px;
+    font-weight: 650;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--faint);
+}
+
+.week-gutter .hour {
+    height: var(--hour);
+    padding-right: 8px;
+    font-size: 10.5px;
+    color: var(--faint);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    transform: translateY(-5px);
+}
+
+.week-col {
+    position: relative;
+    border-left: 1px solid var(--hairline-soft);
+    background: repeating-linear-gradient(
+        to bottom,
+        var(--hairline-soft) 0 1px,
+        transparent 1px var(--hour)
+    );
+}
+
+.block {
+    position: absolute;
+    left: 3px;
+    right: 3px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    border-left: 3px solid;
+    overflow: hidden;
+    font-size: 11px;
+    line-height: 1.3;
+}
+
+.block .b-num {
+    display: block;
+    font-weight: 650;
+    color: var(--ink);
+    white-space: nowrap;
+}
+
+.block .b-time {
+    display: block;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.tint-1 { background: var(--t1-bg); border-left-color: var(--t1-edge); }
+.tint-2 { background: var(--t2-bg); border-left-color: var(--t2-edge); }
+.tint-3 { background: var(--t3-bg); border-left-color: var(--t3-edge); }
+.tint-4 { background: var(--t4-bg); border-left-color: var(--t4-edge); }
+.tint-5 { background: var(--t5-bg); border-left-color: var(--t5-edge); }
+
+/* ---------- roster ---------- */
+
+/* beats the shared input[type="search"] width:100% rule */
+.panel-head .search {
+    width: 230px;
+    max-width: 55%;
+    font-size: 13px;
+    padding: 6px 9px;
+}
+
+.roster {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+}
+
+.roster th {
+    padding: 11px 16px 9px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 650;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--faint);
+    border-bottom: 1px solid var(--hairline);
+    white-space: nowrap;
+}
+
+.roster td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--hairline-soft);
+}
+
+.roster tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.roster tbody tr:hover {
+    background: #fcfbf9;
+}
+
+.roster .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.roster .time {
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+    white-space: nowrap;
+}
+
+.roster .days {
+    font-weight: 550;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+}
+
+.roster .actions {
+    text-align: right;
+    width: 1%;
+}
+
+.btn-remove {
+    font: inherit;
+    font-size: 15px;
+    line-height: 1;
+    padding: 3px 7px 5px;
+    color: var(--faint);
+    background: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: color 120ms ease, background-color 120ms ease;
+}
+
+.btn-remove:hover {
+    color: var(--danger);
+    background: #f6eeec;
+}
+
+.empty {
+    padding: 28px 16px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--faint);
+}
+
+.summary {
+    margin: 0;
+    padding: 11px 16px;
+    font-size: 12.5px;
+    color: var(--muted);
+    border-top: 1px solid var(--hairline);
+    font-variant-numeric: tabular-nums;
+}
+
+.summary .over {
+    color: var(--danger);
+}
+
+/* ---------- disclosure ---------- */
+
+.disclosure {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 20px 24px 48px;
+    color: var(--muted);
+    font-size: 12.5px;
+    line-height: 1.6;
+}
+
+.disclosure p {
+    max-width: 68ch;
+    margin: 0 0 8px;
+    padding-left: 12px;
+    border-left: 2px solid var(--hairline);
+}
+
+.disclosure strong {
+    color: var(--ink);
+    font-weight: 600;
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 900px) {
+    .layout {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 16px;
+    }
+}
+
+@media (max-width: 560px) {
+    .appbar {
+        padding: 0 16px;
+    }
+
+    .appbar-stats {
+        font-size: 11.5px;
+    }
+
+    .disclosure {
+        padding: 16px 16px 40px;
+    }
+}
