@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { toMinutes, formatTime12, findConflict, validateCourse, filterCourses, totalUnits } from "./logic.js";
+import { toMinutes, formatTime12, findConflict, validateCourse, filterCourses, totalUnits } from "../logic.js";
 
 // Starter tests to show the setup works. Add your own, and check expected
 // values against the README (the spec), not against what the code currently does.
