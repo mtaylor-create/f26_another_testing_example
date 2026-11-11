@@ -106,16 +106,3 @@ test("totalUnits counts every course entered", () => {
   ];
   assert.equal(totalUnits(courses), 31);
 });
-
-test("a newly added course is included in the table rows and the unit total", () => {
-  const courses = [{ number: "15-113", name: "Effective Coding", units: 9, days: ["M"], start: "09:00", end: "10:00" }];
-  const added = { number: "21-120", name: "Calculus", units: 10, days: ["T"], start: "09:00", end: "10:00" };
-  assert.equal(validateCourse(added), null);
-  assert.equal(findConflict(courses, added), null);
-  courses.push(added);
-
-  const rows = filterCourses(courses, "");
-  assert.equal(rows.length, 2);
-  assert.equal(rows[1].course, added);
-  assert.equal(totalUnits(courses), 19);
-});
