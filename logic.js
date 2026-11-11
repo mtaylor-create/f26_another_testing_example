@@ -28,8 +28,13 @@ export function formatHourLabel(hour) {
 // Returns an error message string, or null if the input is valid.
 // `course` is { number, name, days, start, end }.
 export function validateCourse(course) {
+  const courseNumberPattern = /^[0-9-]+$/;
+
   if (!course.number || !course.name) {
     return "Course number and title are both required.";
+  }
+  if (!courseNumberPattern.test(course.number)) {
+    return "Course number can only contain digits and dashes.";
   }
   if (course.days.length === 0) {
     return "Pick at least one meeting day.";
@@ -59,7 +64,7 @@ export function findConflict(courses, candidate) {
     const otherStart = toMinutes(course.start);
     const otherEnd = toMinutes(course.end);
 
-    if (startMinutes <= otherEnd && otherStart <= endMinutes) {
+    if (startMinutes < otherEnd && otherStart < endMinutes) {
       return course;
     }
   }
